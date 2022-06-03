@@ -28,7 +28,7 @@ class DistanceVector(Node):
         super(DistanceVector, self).__init__(name, topolink, outgoing_links, incoming_links)
         self.vector = {name:0}
         self.messages = []
-        self.verbose = True
+        self.verbose = False
         # TODO: Create any necessary data structure(s) to contain the Node's internal state / distance vector data
 
     def send_initial_messages(self):
@@ -62,7 +62,11 @@ class DistanceVector(Node):
             # test weather new node being added to the message
             for msg_node in msg_nodes:
                 distance = msg_info.get(msg_node)
-                if msg_node in list(self.vector.keys()):
+                if msg_node == self.name:
+                    self.vector[msg_node] = 0
+                elif distance == -99:
+                    self.vector[msg_node] = -99
+                elif msg_node in list(self.vector.keys()):
                     new_dis = min(self.vector.get(msg_node), int(distance) + int(weight))
                     self.vector[msg_node] = new_dis
                 else:
@@ -75,19 +79,26 @@ class DistanceVector(Node):
         self.messages = []
 
         # TODO 2. Send neighbors updated distances
-        print("Iterating....")
+        if self.verbose:
+            print("Iterating....")
         if (old_vector == str(self.vector)):
             if self.verbose:
                 print("no update message from " + self.name)
             pass
         else:
             for incoming_link in self.incoming_links:
-                if self.verbose:
-                    print(str(self.name)+" send " + str(self.vector) +" to " + str(incoming_link.name))
                 if min(self.vector.values()) <= -99:
-                    break
+                    for k ,v in self.vector.items():
+                        if v <= -99:
+                            # print("BREAKKKKKK"+str(self.vector))
+                            self.vector[k] = -99
+                            self.send_msg({self.name: self.vector}, incoming_link.name)
                 else:
                     self.send_msg({self.name:self.vector},incoming_link.name)
+                if self.verbose:
+                    print(str(self.name) + " send " + str(self.vector) + " to " + str(incoming_link.name))
+
+
 
 
     def log_distances(self):
@@ -102,5 +113,9 @@ class DistanceVector(Node):
         NOTE: A0 shows that the distance to self is 0 """
         
         # TODO: Use the provided helper function add_entry() to accomplish this task (see helpers.py).
-        # An example call that which prints the format example text above (hardcoded) is provided.        
-        add_entry("A", "A0,B1,C2")
+        # An example call that which prints the format example text above (hardcoded) is provided.
+        s=''
+        for key,value in sorted(self.vector.items()):
+            s = s + str(key) + str(value) + ','
+        add_entry(self.name,s[:-1])
+
