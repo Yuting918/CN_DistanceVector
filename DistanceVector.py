@@ -3,7 +3,7 @@
 # This defines a DistanceVector (specialization of the Node class)
 # that can run the Bellman-Ford algorithm. The TODOs are all related 
 # to implementing BF. Students should modify this file as necessary,
-# guided by the TODO comments and the assignment instructions. This 
+# guided by the  comments and the assignment instructions. This
 # is the only file that needs to be modified to complete the project.
 #
 # Student code should NOT access the following members, otherwise they may violate
@@ -29,7 +29,6 @@ class DistanceVector(Node):
         self.vector = {name:0}
         self.messages = []
         self.verbose = False
-        # TODO: Create any necessary data structure(s) to contain the Node's internal state / distance vector data
 
     def send_initial_messages(self):
         """ This is run once at the beginning of the simulation, after all
@@ -39,7 +38,7 @@ class DistanceVector(Node):
 
         Remember that links points to a list of Neighbor data structure.  Access
         the elements with .name or .weight """
-        # TODO - Each node needs to build a message and send it to each of its neighbors
+        # Each node needs to build a message and send it to each of its neighbors
         # HINT: Take a look at the skeleton methods provided for you in Node.py
         for incoming_link in self.incoming_links:
             self.send_msg({self.name:{self.name:0}},incoming_link.name)
@@ -50,7 +49,7 @@ class DistanceVector(Node):
         messages from other nodes are received here, processed, and any new DV
         messages that need to be sent to other nodes as a result are sent. """
         # Implement the Bellman-Ford algorithm here.  It must accomplish two tasks below:
-        # TODO 1. Process queued messages
+        # Process queued messages
         old_vector = str(self.vector)
         if self.verbose:
             print("The message of "+ str(self.name) + " are: "+str(self.messages))
@@ -78,7 +77,7 @@ class DistanceVector(Node):
         # Empty queue
         self.messages = []
 
-        # TODO 2. Send neighbors updated distances
+        #  Send neighbors updated distances
         if self.verbose:
             print("Iterating....")
         if (old_vector == str(self.vector)):
@@ -111,9 +110,8 @@ class DistanceVector(Node):
         A is the node currently doing the logging (self),
         B and C are neighbors, with vector weights 1 and 2 respectively
         NOTE: A0 shows that the distance to self is 0 """
-        
-        # TODO: Use the provided helper function add_entry() to accomplish this task (see helpers.py).
-        # An example call that which prints the format example text above (hardcoded) is provided.
+        # Use the provided helper function add_entry() to accomplish this task (see helpers.py).
+
         s=''
         for key,value in sorted(self.vector.items()):
             s = s + str(key) + str(value) + ','
